@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const cors = require('cors')
 const authorization_middleware = require('@moreillon/authorization_middleware');
-const jwt = require('jsonwebtoken')
+const cookieSession = require('cookie-session')
 
 const credentials = require('../common/credentials');
 
@@ -15,6 +15,10 @@ const DB_config = {
   DB_URL : "mongodb://localhost:27017/",
   DB_name : "medical",
   weight_collection_name : "weight",
+  constructor_options: {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  },
 }
 
 // Set timezone
@@ -42,6 +46,14 @@ app.use(cors({
 
   credentials: true,
 }));
+app.use(cookieSession({
+  name: 'session',
+  secret: credentials.session.secret,
+  maxAge: 253402300000000,
+  sameSite: false,
+  domain: '.maximemoreillon.com'
+}));
+
 
 
 // Express routes
@@ -50,7 +62,7 @@ app.post('/upload',authorization_middleware.middleware, (req, res) => {
   if('weight' in req.body){
 
 
-    MongoClient.connect(DB_config.DB_URL, { useNewUrlParser: true }, (err, db) => {
+    MongoClient.connect(DB_config.DB_URL, DB_config.constructor_options, (err, db) => {
       if (err) throw err;
 
       db.db(DB_config.DB_name)
@@ -76,7 +88,7 @@ app.post('/upload',authorization_middleware.middleware, (req, res) => {
 })
 
 app.post('/history',authorization_middleware.middleware,  (req, res) => {
-  MongoClient.connect(DB_config.DB_URL, { useNewUrlParser: true }, (err, db) => {
+  MongoClient.connect(DB_config.DB_URL, DB_config.constructor_options, (err, db) => {
     if (err) throw err;
     db.db(DB_config.DB_name)
     .collection(DB_config.weight_collection_name)
@@ -91,7 +103,7 @@ app.post('/history',authorization_middleware.middleware,  (req, res) => {
 })
 
 app.post('/current_weight',authorization_middleware.middleware,  (req, res) => {
-  MongoClient.connect(DB_config.DB_URL, { useNewUrlParser: true }, (err, db) => {
+  MongoClient.connect(DB_config.DB_URL, DB_config.constructor_options, (err, db) => {
     if (err) throw err;
     db.db(DB_config.DB_name)
     .collection(DB_config.weight_collection_name)
