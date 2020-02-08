@@ -19,8 +19,7 @@ containerization:
 deployment:
   stage: deploy
   script:
-    - ls
-    # - kubectl apply -f deployment.yml
-    # - kubectl rollout restart deployment/${KUBERNETES_DEPLOYMENT}
+    - kubectl apply -f deployment.yml
+    - kubectl rollout restart deployment/${KUBERNETES_DEPLOYMENT}
   environment:
     name: production
