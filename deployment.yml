@@ -27,7 +27,7 @@ metadata:
 spec:
   ports:
   - port: 8633
-    nodePort: 38633
+    nodePort: 30633
   selector:
     app: weight-deployment
   type: LoadBalancer
