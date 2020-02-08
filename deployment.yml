@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weight-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: weight-deployment
+  template:
+    metadata:
+      labels:
+        app: weight-deployment
+    spec:
+      containers:
+      - name: weight
+        image: moreillon/weight
+        ports:
+        - containerPort: 8633
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: weight-service
+  name: weight-service
+spec:
+  ports:
+  - port: 8633
+    nodePort: 38633
+  selector:
+    app: weight-deployment
+  type: LoadBalancer

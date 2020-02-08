@@ -7,14 +7,14 @@ const cors = require('cors')
 const authorization_middleware = require('@moreillon/authorization_middleware');
 const cookieSession = require('cookie-session')
 
-const credentials = require('../common/credentials');
+const secrets = require('./secrets');
 
 const port = 8633;
 
 const DB_config = {
-  DB_URL : "mongodb://localhost:27017/",
-  DB_name : "medical",
-  weight_collection_name : "weight",
+  DB_URL : secrets.mongodb_url,
+  DB_name : secrets.db_name,
+  weight_collection_name : secrets.collection_name,
   constructor_options: {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -24,7 +24,7 @@ const DB_config = {
 // Set timezone
 process.env.TZ = 'Asia/Tokyo';
 
-authorization_middleware.secret = credentials.jwt.secret
+authorization_middleware.secret = secrets.jwt_secret
 
 function get_token(authorization_header){
   return authorization_header.split(" ")[1]
@@ -48,10 +48,10 @@ app.use(cors({
 }));
 app.use(cookieSession({
   name: 'session',
-  secret: credentials.session.secret,
+  secret: secrets.session_secret,
   maxAge: 253402300000000,
   sameSite: false,
-  domain: '.maximemoreillon.com'
+  domain: secrets.cookies_domain
 }));
 
 
@@ -59,37 +59,30 @@ app.use(cookieSession({
 // Express routes
 app.post('/upload',authorization_middleware.middleware, (req, res) => {
 
-  if('weight' in req.body){
+  // Check input
+  if( !('weight' in req.body) ) return res.status(400).send('weight is not present in request body')
 
-
-    MongoClient.connect(DB_config.DB_URL, DB_config.constructor_options, (err, db) => {
+  MongoClient.connect(DB_config.DB_URL, DB_config.constructor_options, (err, db) => {
+    if (err) { return res.status(500).send('Error connecting to the DB') }
+    db.db(DB_config.DB_name)
+    .collection(DB_config.weight_collection_name)
+    .insertOne({
+      date: new Date(),
+      weight: Number(req.body.weight)
+    },
+    (err, result) => {
       if (err) throw err;
-
-      db.db(DB_config.DB_name)
-      .collection(DB_config.weight_collection_name)
-      .insertOne({
-        date: new Date(),
-        weight: Number(req.body.weight)
-      },
-      (err, result) => {
-        if (err) throw err;
-        console.log(`Inserted ${req.body.weight}kg`)
-        db.close();
-        res.send("OK");
-      });
+      console.log(`Inserted ${req.body.weight}kg`)
+      db.close();
+      res.send("OK");
     });
+  });
 
-
-  }
-  else {
-    // Invalid
-    res.status(400)
-  }
 })
 
 app.post('/history',authorization_middleware.middleware,  (req, res) => {
   MongoClient.connect(DB_config.DB_URL, DB_config.constructor_options, (err, db) => {
-    if (err) throw err;
+    if (err) { return res.status(500).send('Error connecting to the DB') }
     db.db(DB_config.DB_name)
     .collection(DB_config.weight_collection_name)
     .find({})
@@ -104,7 +97,7 @@ app.post('/history',authorization_middleware.middleware,  (req, res) => {
 
 app.post('/current_weight',authorization_middleware.middleware,  (req, res) => {
   MongoClient.connect(DB_config.DB_URL, DB_config.constructor_options, (err, db) => {
-    if (err) throw err;
+    if (err) { return res.status(500).send('Error connecting to the DB') }
     db.db(DB_config.DB_name)
     .collection(DB_config.weight_collection_name)
     .find({})
