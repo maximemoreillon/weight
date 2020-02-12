@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@moreillon/authorization_middleware": "^0.1.7",
+    "@moreillon/authorization_middleware": "^0.1.8",
     "cookie-session": "^1.4.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
