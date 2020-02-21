@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const cors = require('cors')
 const authorization_middleware = require('@moreillon/authorization_middleware');
-const cookieSession = require('cookie-session')
 
 const secrets = require('./secrets');
 
@@ -36,23 +35,10 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 app.use(bodyParser.json());
 
-app.use(cors({
-  //origin: misc.cors_origins,
+app.use(cors());
 
-  // Hack to allow all origins
-  origin: (origin, callback) => {
-    callback(null, true)
-  },
 
-  credentials: true,
-}));
-app.use(cookieSession({
-  name: 'session',
-  secret: secrets.session_secret,
-  maxAge: 253402300000000,
-  sameSite: false,
-  domain: secrets.cookies_domain
-}));
+app.use(authorization_middleware.middleware);
 
 
 
