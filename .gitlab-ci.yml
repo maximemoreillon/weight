@@ -4,7 +4,7 @@ stages:
 
 variables:
   DOCKER_IMAGE: moreillon/weight
-  KUBERNETES_DEPLOYMENT: weight-deployment
+  KUBERNETES_DEPLOYMENT: weight
 
 
 containerization:
