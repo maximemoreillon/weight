@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: weight
-        image: moreillon/weight
+        image: 192.168.1.2:5000/weight
         ports:
         - containerPort: 8633
 ---

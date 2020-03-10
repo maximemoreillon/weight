@@ -26,17 +26,9 @@ const influx = new Influx.InfluxDB({
 // Create DB if not exists
 influx.getDatabaseNames()
 .then(names => {
-  if (!names.includes(DB_name)) {
-    console.log("DB does not exist, creating")
-    return influx.createDatabase(DB_name)
-  }
-  else {
-    console.log("DB already exists")
-  }
+  if (!names.includes(DB_name)) return influx.createDatabase(DB_name)
 })
-.catch(err => {
-  console.error(`Error creating Influx database! ${err}`);
-})
+.catch(err => { console.error(`Error creating Influx database! ${err}`) })
 
 
 var app = express();
