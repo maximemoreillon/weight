@@ -29,7 +29,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(authorization_middleware.middleware);
 
-
+console.log(secrets.influx_url)
 
 // Express routes
 app.post('/upload', (req,res) => {
