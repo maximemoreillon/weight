@@ -10,7 +10,7 @@ const secrets = require('./secrets');
 
 const port = 8633;
 const measurement_name = 'weight'
-
+const DB_name = 'medical'
 
 
 // Set timezone
@@ -20,8 +20,24 @@ authorization_middleware.secret = secrets.jwt_secret
 
 const influx = new Influx.InfluxDB({
   host: secrets.influx_url,
-  database: 'medical',
+  database: DB_name,
 })
+
+// Create DB if not exists
+influx.getDatabaseNames()
+.then(names => {
+  if (!names.includes(DB_name)) {
+    console.log("DB does not exist, creating")
+    return influx.createDatabase(DB_name)
+  }
+  else {
+    console.log("DB already exists")
+  }
+})
+.catch(err => {
+  console.error(`Error creating Influx database! ${err}`);
+})
+
 
 var app = express();
 app.use(express.static(path.join(__dirname, 'dist')));
@@ -29,7 +45,6 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(authorization_middleware.middleware);
 
-console.log(secrets.influx_url)
 
 // Express routes
 app.post('/upload', (req,res) => {
