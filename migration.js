@@ -2,6 +2,7 @@ const axios = require('axios')
 const jwt = require('jsonwebtoken')
 const secrets = require('./secrets')
 const Influx = require('influx')
+var MongoClient = require('mongodb').MongoClient;
 
 const DB_name = 'medical'
 
@@ -23,19 +24,21 @@ influx.dropDatabase(DB_name)
 
 
         jwt.sign({ app: 'medical_migration' }, secrets.jwt_secret, (err, token) => {
+          if(err) throw err
 
-          axios.post('https://weight.maximemoreillon.com/history',{}, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + token,
-            }
-          })
-          .then(response => {
+          MongoClient.connect("mongodb://localhost:27017/", (err, db) => {
+          if (err) throw(err)
+          console.log('Connection to DB OK')
+          db.db("medical")
+          .collection("weight")
+          .find({}).toArray( (err, result) => {
+            db.close();
+            if (err) throw(err)
 
             let points = []
 
 
-            response.data.forEach(entry => {
+            result.forEach(entry => {
               points.push({
                 measurement: "weight",
                 tags: {
@@ -57,10 +60,27 @@ influx.dropDatabase(DB_name)
             })
             .then( () => console.log("OK"))
             .catch(error =>  console.log(`Error saving data to InfluxDB! ${error}`));
-            
+          });
+        });
+
+
+          /*
+
+          axios.post('https://weight.maximemoreillon.com/history',{}, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token,
+            }
+          })
+          .then(response => {
+
+
+
 
           })
           .catch(error => {console.log(error)})
+
+          */
 
 
 
