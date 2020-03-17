@@ -76,7 +76,7 @@ app.post('/history', (req,res) => {
 
 app.post('/current_weight', (req,res) => {
   influx.query(`select * from ${measurement_name} GROUP BY * ORDER BY DESC LIMIT 1`)
-  .then( result => res.send(result[0].balance) )
+  .then( result => res.send(result[0]) )
   .catch( error => res.status(500).send(`Error getting weight from Influx: ${error}`) );
 })
 
