@@ -16,7 +16,7 @@ const DB_name = 'medical'
 // Set timezone
 process.env.TZ = 'Asia/Tokyo';
 
-authorization_middleware.secret = secrets.jwt_secret
+authorization_middleware.authentication_api_url = secrets.authentication_api_url
 
 const influx = new Influx.InfluxDB({
   host: secrets.influx_url,
