@@ -5,10 +5,14 @@ const path = require('path')
 const cors = require('cors')
 const Influx = require('influx')
 const authorization_middleware = require('@moreillon/authorization_middleware')
+const dotenv = require('dotenv');
 
-const secrets = require('./secrets');
+dotenv.config();
 
-const port = 8633;
+
+var port = 80
+if(process.env.APP_PORT) port=process.env.APP_PORT
+
 const measurement_name = 'weight'
 const DB_name = 'medical'
 
@@ -16,10 +20,10 @@ const DB_name = 'medical'
 // Set timezone
 process.env.TZ = 'Asia/Tokyo';
 
-authorization_middleware.authentication_api_url = secrets.authentication_api_url
+authorization_middleware.authentication_api_url = `${process.env.AUTHENTIATION_API_URL}/decode_jwt`
 
 const influx = new Influx.InfluxDB({
-  host: secrets.influx_url,
+  host: process.env.INFLUX_URL,
   database: DB_name,
 })
 

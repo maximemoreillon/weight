@@ -4,14 +4,15 @@ stages:
 
 variables:
   APPLICATION_NAME: weight
-  DOCKER_REGISTRY: 192.168.1.2:5000
   DOCKER_IMAGE: ${DOCKER_REGISTRY}/${APPLICATION_NAME}
+  CERTIFICATE_DOMAIN: api.weight.maximemoreillon.com
 
 
 containerization:
   stage: containerization
   script:
-    - cp ${SECRETS} ./secrets.js
+    - cp ${ENV} ./.env
+    - echo "${CONTAINER_REGISTRY_PASSWORD}" | docker login ${CONTAINER_REGISTRY} --username ${CONTAINER_REGISTRY_USERNAME} --password-stdin
     - docker build -t ${DOCKER_IMAGE} .
     - docker push ${DOCKER_IMAGE}
     - docker image rm ${DOCKER_IMAGE}
@@ -19,7 +20,9 @@ containerization:
 deployment:
   stage: deploy
   script:
-    - kubectl apply -f deployment.yml
+    - envsubst < deployment.yml | kubectl apply -f -
     - kubectl rollout restart deployment/${APPLICATION_NAME}
   environment:
     name: production
+    kubernetes:
+      namespace: ${KUBERNETES_NAMESPACE}

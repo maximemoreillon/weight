@@ -1,33 +1,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: weight
+  name: ${APPLICATION_NAME}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: weight
+      app: ${APPLICATION_NAME}
   template:
     metadata:
       labels:
-        app: weight
+        app: ${APPLICATION_NAME}
     spec:
       containers:
-      - name: weight
-        image: 192.168.1.2:5000/weight
+      - name: ${APPLICATION_NAME}
+        image: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
         ports:
-        - containerPort: 8633
+        - containerPort: 80
+      imagePullSecrets:
+      - name: registry-credentials
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    run: weight
-  name: weight
+  name: ${APPLICATION_NAME}
 spec:
   ports:
-  - port: 8633
+  - port: 80
     nodePort: 30633
   selector:
-    app: weight
+    app: ${APPLICATION_NAME}
   type: LoadBalancer
+
+# Note: Home does not use INGRESS (yet)
