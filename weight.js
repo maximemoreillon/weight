@@ -9,13 +9,11 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-
 var port = 80
 if(process.env.APP_PORT) port=process.env.APP_PORT
 
 const measurement_name = 'weight'
 const DB_name = 'medical'
-
 
 // Set timezone
 process.env.TZ = 'Asia/Tokyo';
