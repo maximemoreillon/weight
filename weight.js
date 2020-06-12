@@ -34,7 +34,6 @@ influx.getDatabaseNames()
 
 
 var app = express();
-app.use(express.static(path.join(__dirname, 'dist')));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(authorization_middleware.middleware);

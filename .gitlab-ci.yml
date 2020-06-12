@@ -5,7 +5,7 @@ stages:
 variables:
   APPLICATION_NAME: weight
   DOCKER_IMAGE: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
-  CERTIFICATE_DOMAIN: weight.maximemoreillon.com
+  CERTIFICATE_DOMAIN: api.weight.maximemoreillon.com
 
 
 containerization:
