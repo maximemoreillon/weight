@@ -69,14 +69,13 @@ app.post('/upload', (req,res) => {
 
 })
 
-app.post('/history', (req,res) => {
+app.get('/history', (req,res) => {
   influx.query(`select * from ${measurement_name}`)
   .then( result => res.send(result) )
   .catch( error => res.status(500).send(`Error getting weight from Influx: ${error}`) );
 })
 
-app.post('/current_weight', (req,res) => {
-
+app.get('/current_weight', (req,res) => {
   influx.query(`select * from ${measurement_name} GROUP BY * ORDER BY DESC LIMIT 1`)
   .then( result => { res.send(result[0]) } )
   .catch( error => res.status(500).send(`Error getting weight from Influx: ${error}`) );
