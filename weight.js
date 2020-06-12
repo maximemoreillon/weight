@@ -21,7 +21,7 @@ process.env.TZ = 'Asia/Tokyo';
 authorization_middleware.authentication_api_url = `${process.env.AUTHENTIATION_API_URL}/decode_jwt`
 
 const influx = new Influx.InfluxDB({
-  host: process.env.INFLUX_URL,
+  host: process.env.INFLUXDB_URL,
   database: DB_name,
 })
 
@@ -38,6 +38,9 @@ app.use(bodyParser.json());
 app.use(cors());
 //app.use(authorization_middleware.middleware);
 
+app.get('/', (req,res) => {
+  res.send(`Weight API, Maxime MOREILLON`)
+})
 
 // Express routes
 app.post('/upload', (req,res) => {
