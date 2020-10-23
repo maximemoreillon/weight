@@ -9,8 +9,7 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-var port = 80
-if(process.env.APP_PORT) port=process.env.APP_PORT
+const port = process.env.APP_PORT || 80
 
 const measurement_name = 'weight'
 const DB_name = 'medical'
