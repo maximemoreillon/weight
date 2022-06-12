@@ -10,6 +10,8 @@ variables:
 
 containerization:
   stage: containerization
+  only:
+    - master
   tags:
     - moreillon
   script:
@@ -20,9 +22,10 @@ containerization:
 
 deployment:
   stage: deploy
+  only:
+    - master
   script:
-    - envsubst < deployment.yml | kubectl apply -f -
-    - kubectl rollout restart deployment/${APPLICATION_NAME}
+    - envsubst < manifest.yml | kubectl apply -f -
   environment:
     name: production
     kubernetes:
