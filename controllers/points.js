@@ -1,3 +1,4 @@
+const createHttpError = require('http-errors')
 const { Point } = require('@influxdata/influxdb-client')
 const {
     org,
@@ -8,37 +9,31 @@ const {
     measurement
 } = require('../db.js')
 
+
 exports.create_point = async (req, res, next) => {
     try {
 
-        const data = req.body
+        const { weight, time} = req.body
+
+        if (!weight) throw createHttpError(400, `Weight not provided`)
 
         // Create point
-        let point = new Point(measurement)
+        const point = new Point(measurement)
+        
+        // Timestamp
+        if (time) point.timestamp(new Date(time))
+        else point.timestamp(new Date())
 
-        // Deal with values
-        for (const field in data) {
-            const value = data[field]
+        // Add weight
+        if ((typeof weight) === 'number') point.floatField('weight', weight)
+        else point.floatField('weight', parseFloat(weight))
 
-            if (field === 'time') {
-                // Add time if provided
-                point.timestamp(new Date(value))
-            }
-            else if ((typeof value) === 'number') {
-                // float value
-                point.floatField(field, parseFloat(value))
-            }
-            else {
-                // String value
-                point.stringField(field, value)
-            }
-        }
 
         // write (flush is to actually perform the operation)
         writeApi.writePoint(point)
         await writeApi.flush()
 
-        console.log(`Point created in measurement ${measurement}`)
+        console.log(`Point created in measurement ${measurement}: ${weight}`)
 
         // Respond
         res.send(point)
