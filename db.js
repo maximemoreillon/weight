@@ -15,7 +15,7 @@ const {
     INFLUXDB_URL,
     INFLUXDB_TOKEN,
     INFLUXDB_ORG,
-    INFLUXDB_BUCKET,
+    INFLUXDB_BUCKET = 'health',
     INFLUXDB_MEASUREMENT = 'weight',
     PRECISION = 'ns',
 } = process.env
