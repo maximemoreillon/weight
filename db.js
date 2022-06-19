@@ -12,7 +12,7 @@ const agent = new Agent({
 
 
 const {
-    INFLUXDB_URL,
+    INFLUXDB_URL = 'localhost',
     INFLUXDB_TOKEN,
     INFLUXDB_ORG,
     INFLUXDB_BUCKET = 'health',
