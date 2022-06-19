@@ -1,6 +1,6 @@
-FROM node:10
+FROM node:14
 WORKDIR /usr/src/app
 COPY . .
 RUN npm install
 EXPOSE 80
-CMD [ "node", "weight.js" ]
+CMD [ "node", "index.js" ]

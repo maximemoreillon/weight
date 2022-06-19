@@ -1,23 +1,24 @@
 {
   "name": "weight",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
-  "main": "weight.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon"
   },
   "keywords": [],
-  "author": "",
+  "author": "Maxime Moreillon",
   "license": "ISC",
   "dependencies": {
-    "@moreillon/authorization_middleware": "^0.3.0",
+    "@influxdata/influxdb-client": "^1.26.0",
+    "@influxdata/influxdb-client-apis": "^1.26.0",
     "axios": "^0.19.2",
-    "cookie-session": "^1.4.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "influx": "^5.6.3",
-    "jsonwebtoken": "^8.5.1",
-    "mongodb": "^3.6.2"
+    "http-errors": "^2.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
   }
 }
