@@ -7,7 +7,7 @@ const influxdb = require('./db')
 dotenv.config()
 
 const {
-  APP_PORT,
+  APP_PORT = 80,
 } = process.env
 
 
