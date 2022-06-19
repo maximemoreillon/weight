@@ -36,6 +36,8 @@ app.get('/', (req,res) => {
 
 app.use('/points', require('./routes/points'))
 
+// Route for legacy code compatibility
+app.post('/upload', require('./controllers/points').create_point)
 
 
 // start server
