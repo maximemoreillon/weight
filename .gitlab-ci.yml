@@ -35,7 +35,7 @@ deploy:
   tags:
     - dind
   script:
-    - envsubst < manifest.yml | kubectl apply -f -
+    - envsubst < kubermetes_manifest.yml | kubectl apply -f -
   environment:
     name: production
     kubernetes:
