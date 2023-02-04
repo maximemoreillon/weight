@@ -6,13 +6,11 @@ image: moreillon/ci-dind
 services:
   - name: docker:19.03.12-dind
 
-
 variables:
   APPLICATION_NAME: weight
   CONTAINER_IMAGE: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}
   CONTAINER_IMAGE_TAGGED: ${CONTAINER_IMAGE}:${CI_COMMIT_SHORT_SHA}
   CERTIFICATE_DOMAIN: api.weight.maximemoreillon.com
-
 
 build:
   stage: build
@@ -27,16 +25,13 @@ build:
     - docker push ${CONTAINER_IMAGE}
     - docker push ${CONTAINER_IMAGE_TAGGED}
 
-
 deploy:
   stage: deploy
   only:
     - master
   tags:
     - dind
+  before_script:
+    - kubectl config use-context moreillon_ci/moreillon_k8s_home/kubernetes-agent:home
   script:
     - envsubst < kubernetes_manifest.yml | kubectl apply -f -
-  environment:
-    name: production
-    kubernetes:
-      namespace: ${KUBERNETES_NAMESPACE}
