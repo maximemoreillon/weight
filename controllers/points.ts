@@ -68,7 +68,7 @@ export const read_points = async (
             `
 
     // subsampling
-    if (limit) {
+    if (Number(limit)) {
       // Getting point count to compute the sampling from the limit
       const count_query = query + `|> count()`
       const record_count_query_result: any = await influx_read(count_query)
