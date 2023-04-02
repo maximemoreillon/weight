@@ -34,4 +34,4 @@ deploy:
   before_script:
     - kubectl config use-context moreillon_ci/moreillon_k8s_home/kubernetes-agent:home
   script:
-    - envsubst < kubernetes_manifest.yml | kubectl apply -f -
+    - envsubst < kubernetes_manifest.yml | kubectl apply -n ${KUBERNETES_NAMESPACE} -f -
