@@ -8,7 +8,7 @@ services:
 
 variables:
   # DOCKER_HOST: tcp://docker:2375
-  # DOCKER_TLS_CERTDIR: ""
+  DOCKER_TLS_CERTDIR: ""
 
   APPLICATION_NAME: weight
   CONTAINER_IMAGE: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}
@@ -23,6 +23,7 @@ build:
     # - dind
     - k8s
   before_script:
+    - docker info
     - echo "${DOCKER_HUB_PASSWORD}" | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin;
   script:
     - docker build -t ${CONTAINER_IMAGE} .
