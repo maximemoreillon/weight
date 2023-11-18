@@ -3,8 +3,8 @@ stages:
   - deploy
 
 image: moreillon/ci-dind
-services:
-  - name: docker:24.0.7-dind
+# services:
+#   - name: docker:24.0.7-dind
 
 variables:
   APPLICATION_NAME: weight
