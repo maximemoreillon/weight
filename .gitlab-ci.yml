@@ -17,7 +17,8 @@ build:
   only:
     - master
   tags:
-    - dind
+    # - dind
+    - k8s
   script:
     - echo "${DOCKER_HUB_PASSWORD}" | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin;
     - docker build -t ${CONTAINER_IMAGE} .
@@ -30,7 +31,8 @@ deploy:
   only:
     - master
   tags:
-    - dind
+    # - dind
+    - k8s
   before_script:
     - kubectl config use-context moreillon_ci/moreillon_k8s_home/kubernetes-agent:home
   script:
