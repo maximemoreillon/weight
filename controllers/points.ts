@@ -4,6 +4,32 @@ import { Request, Response, NextFunction } from "express"
 import { Point } from "@influxdata/influxdb-client"
 import { bucket, writeApi, influx_read, measurement } from "../db"
 
+type WeightPoint = {
+  weight: number
+  time?: Date
+}
+
+export const writePoint = async ({ weight, time }: WeightPoint) => {
+  // Create point
+  const point = new Point(measurement)
+
+  // Timestamp
+  if (time) point.timestamp(new Date(time))
+  else point.timestamp(new Date())
+
+  // Add weight
+  if (typeof weight === "number") point.floatField("weight", weight)
+  else point.floatField("weight", parseFloat(weight))
+
+  // write (flush is to actually perform the operation)
+  writeApi.writePoint(point)
+  await writeApi.flush()
+
+  console.log(`Point created in measurement ${measurement}: ${weight}`)
+
+  return point
+}
+
 export const create_point = async (
   req: Request,
   res: Response,
@@ -14,22 +40,7 @@ export const create_point = async (
 
     if (!weight) throw createHttpError(400, `Weight not provided`)
 
-    // Create point
-    const point = new Point(measurement)
-
-    // Timestamp
-    if (time) point.timestamp(new Date(time))
-    else point.timestamp(new Date())
-
-    // Add weight
-    if (typeof weight === "number") point.floatField("weight", weight)
-    else point.floatField("weight", parseFloat(weight))
-
-    // write (flush is to actually perform the operation)
-    writeApi.writePoint(point)
-    await writeApi.flush()
-
-    console.log(`Point created in measurement ${measurement}: ${weight}`)
+    const point = await writePoint({ weight, time })
 
     // Respond
     res.send(point)

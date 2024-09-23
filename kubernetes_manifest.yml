@@ -17,6 +17,9 @@ spec:
           image: ${CONTAINER_IMAGE_TAGGED}
           ports:
             - containerPort: 80
+          env:
+            - name: MQTT_TOPIC
+              value: moreillon/scale-f79c9/measurement
           envFrom:
             - secretRef:
                 name: environment-variables
