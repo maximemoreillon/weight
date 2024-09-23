@@ -23,6 +23,8 @@ spec:
           envFrom:
             - secretRef:
                 name: environment-variables
+            - secretRef:
+                name: auth0-env
 ---
 apiVersion: v1
 kind: Service

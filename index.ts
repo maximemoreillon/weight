@@ -11,6 +11,7 @@ import {
   connect as mqttConnect,
   MQTT_TOPIC,
 } from "./mqtt"
+import { authMiddleware, IDENTIFICATION_URL, OIDC_JWKS_URI } from "./auth"
 
 const { APP_PORT = 80 } = process.env
 
@@ -38,9 +39,14 @@ app.get("/", (req, res) => {
       topic: MQTT_TOPIC,
       connected: mqttGetConnected(),
     },
+    auth: {
+      identification_url: IDENTIFICATION_URL,
+      oidc_jwks_uri: OIDC_JWKS_URI,
+    },
   })
 })
 
+app.use(authMiddleware)
 app.use("/points", require("./routes/points"))
 
 // start server
