@@ -1,12 +1,20 @@
+import dotenv from "dotenv"
+dotenv.config()
+
 import express from "express"
 import cors from "cors"
 import { version, author } from "./package.json"
-import dotenv from "dotenv"
 import * as influxdb from "./db"
-
-dotenv.config()
+import {
+  getConnected as mqttGetConnected,
+  MQTT_URL,
+  connect as mqttConnect,
+  MQTT_TOPIC,
+} from "./mqtt"
 
 const { APP_PORT = 80 } = process.env
+
+mqttConnect()
 
 // Set timezone
 process.env.TZ = process.env.TZ || "Asia/Tokyo"
@@ -24,6 +32,11 @@ app.get("/", (req, res) => {
       url: influxdb.url,
       org: influxdb.org,
       bucket: influxdb.bucket,
+    },
+    mqtt: {
+      url: MQTT_URL,
+      topic: MQTT_TOPIC,
+      connected: mqttGetConnected(),
     },
   })
 })
