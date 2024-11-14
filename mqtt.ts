@@ -12,7 +12,6 @@ const mqtt_options = {
   username: MQTT_USERNAME,
   password: MQTT_PASSWORD,
   reconnectPeriod: 5000, // Default was too fast
-  resubscribe: true, // Defaults to true
 }
 
 const message_handler = async (topic: string, messageBuffer: Buffer) => {
