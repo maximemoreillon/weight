@@ -8,10 +8,10 @@ services:
 
 variables:
   # Needed for k8s runner
-  DOCKER_HOST: tcp://docker:2376
-  DOCKER_TLS_CERTDIR: "/certs"
-  DOCKER_TLS_VERIFY: 1
-  DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
+  # DOCKER_HOST: tcp://docker:2376
+  # DOCKER_TLS_CERTDIR: "/certs"
+  # DOCKER_TLS_VERIFY: 1
+  # DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
 
   APPLICATION_NAME: weight
   CONTAINER_IMAGE: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}
@@ -23,8 +23,8 @@ build:
   only:
     - master
   tags:
-    # - dind
-    - k8s
+    - dind
+    # - k8s
   before_script:
     - docker info
     - echo "${DOCKER_HUB_PASSWORD}" | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin;
@@ -39,9 +39,9 @@ deploy:
   only:
     - master
   tags:
-    # - dind
-    - k8s
+    - dind
+    # - k8s
   before_script:
-    - kubectl config use-context moreillon_ci/moreillon_k8s_home/kubernetes-agent:home
+    - kubectl config use-context moreillon_ci/moreillon_k8s_home/kubernetes-agent:home-talos
   script:
     - envsubst < kubernetes_manifest.yml | kubectl apply -n ${KUBERNETES_NAMESPACE} -f -
