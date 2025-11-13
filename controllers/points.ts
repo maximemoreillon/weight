@@ -1,16 +1,11 @@
-import createHttpError from "http-errors";
 import { Request, Response } from "express";
 import { pool } from "../db";
+import { pointSchema } from "../validation";
+import z from "zod";
+import createHttpError from "http-errors";
 
-type WeightPoint = {
-  weight: number;
-  time?: Date;
-};
-
-export const writePoint = async ({
-  weight,
-  time = new Date(),
-}: WeightPoint) => {
+export const writePoint = async (point: z.infer<typeof pointSchema>) => {
+  const { weight, time } = point;
   const sql = `
     INSERT INTO points (time, weight) 
     VALUES ($1, $2)
@@ -24,14 +19,12 @@ export const writePoint = async ({
 };
 
 export const create_point = async (req: Request, res: Response) => {
-  const { weight, time } = req.body;
-  // Problem: time is not a date object!
+  const { error, data: point } = pointSchema.safeParse(req.body);
+  if (error) throw createHttpError(400, error.message);
 
-  if (!weight) throw createHttpError(400, `Weight not provided`);
+  const newPoint = await writePoint(point);
 
-  const point = await writePoint({ weight, time });
-
-  res.send(point);
+  res.send(newPoint);
 };
 
 export const read_points = async (req: Request, res: Response) => {

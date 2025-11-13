@@ -1,5 +1,6 @@
 import mqtt, { MqttClient } from "mqtt";
 import { writePoint } from "./controllers/points";
+import { pointSchema } from "./validation";
 
 export const {
   MQTT_URL = "mqtt://localhost:1883",
@@ -17,9 +18,12 @@ const mqtt_options = {
 const message_handler = async (topic: string, messageBuffer: Buffer) => {
   try {
     const messageString = messageBuffer.toString();
-    const { weight, time } = JSON.parse(messageString);
-    // TODO: time is not a dae object
-    writePoint({ weight, time });
+
+    const messageJson = JSON.parse(messageString);
+
+    const point = pointSchema.parse(messageJson);
+
+    writePoint(point);
   } catch (error) {
     console.error(error);
   }
