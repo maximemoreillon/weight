@@ -18,9 +18,7 @@ const mqtt_options = {
 const message_handler = async (topic: string, messageBuffer: Buffer) => {
   try {
     const messageString = messageBuffer.toString();
-
     const messageJson = JSON.parse(messageString);
-
     const point = pointSchema.parse(messageJson);
 
     writePoint(point);

@@ -18,6 +18,8 @@ spec:
           env:
             - name: MQTT_TOPIC
               value: moreillon/scale-f79c9/measurement
+            - name: TIMESCALEDB_DATABASE
+              value: health
           envFrom:
             - secretRef:
                 name: environment-variables

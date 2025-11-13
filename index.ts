@@ -13,7 +13,7 @@ import { authMiddleware, IDENTIFICATION_URL, OIDC_JWKS_URI } from "./auth";
 import { router as pointsRouter } from "./routes/points";
 const { APP_PORT = 80 } = process.env;
 
-// mqttConnect();
+mqttConnect();
 
 if (!process.env.TZ) process.env.TZ = "Asia/Tokyo";
 

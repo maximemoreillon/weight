@@ -7,7 +7,7 @@ import createHttpError from "http-errors";
 export const writePoint = async (point: z.infer<typeof pointSchema>) => {
   const { weight, time } = point;
   const sql = `
-    INSERT INTO points (time, weight) 
+    INSERT INTO weight (time, weight) 
     VALUES ($1, $2)
     RETURNING *`;
 
@@ -31,7 +31,7 @@ export const read_points = async (req: Request, res: Response) => {
   const { from = new Date(0), to = new Date(), limit = "5000" } = req.query;
 
   const sql = `
-    SELECT * FROM points 
+    SELECT * FROM weight 
     WHERE time BETWEEN $1 AND $2
     ORDER BY time DESC
     LIMIT $3`;
