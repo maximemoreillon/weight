@@ -1,104 +1,42 @@
-import createHttpError from "http-errors"
-import { Request, Response, NextFunction } from "express"
+import { Request, Response } from "express";
+import { pool } from "../db";
+import { pointSchema } from "../validation";
+import z from "zod";
+import createHttpError from "http-errors";
 
-import { Point } from "@influxdata/influxdb-client"
-import { bucket, writeApi, influx_read, measurement } from "../db"
+export const writePoint = async (point: z.infer<typeof pointSchema>) => {
+  const { weight, time } = point;
+  const sql = `
+    INSERT INTO weight (time, weight) 
+    VALUES ($1, $2)
+    RETURNING *`;
 
-type WeightPoint = {
-  weight: number
-  time?: Date
-}
+  const {
+    rows: [newPoint],
+  } = await pool.query(sql, [time, weight]);
 
-export const writePoint = async ({ weight, time }: WeightPoint) => {
-  // Create point
-  const point = new Point(measurement)
+  return newPoint;
+};
 
-  // Timestamp
-  if (time) point.timestamp(new Date(time))
-  else point.timestamp(new Date())
+export const create_point = async (req: Request, res: Response) => {
+  const { error, data: point } = pointSchema.safeParse(req.body);
+  if (error) throw createHttpError(400, error.message);
 
-  // Add weight
-  if (typeof weight === "number") point.floatField("weight", weight)
-  else point.floatField("weight", parseFloat(weight))
+  const newPoint = await writePoint(point);
 
-  // write (flush is to actually perform the operation)
-  writeApi.writePoint(point)
-  await writeApi.flush()
+  res.send(newPoint);
+};
 
-  console.log(`Point created in measurement ${measurement}: ${weight}`)
+export const read_points = async (req: Request, res: Response) => {
+  const { from = new Date(0), to = new Date(), limit = "5000" } = req.query;
 
-  return point
-}
+  const sql = `
+    SELECT * FROM weight 
+    WHERE time BETWEEN $1 AND $2
+    ORDER BY time DESC
+    LIMIT $3`;
 
-export const create_point = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { weight, time } = req.body
+  const { rows } = await pool.query(sql, [from, to, Number(limit)]);
 
-    if (!weight) throw createHttpError(400, `Weight not provided`)
-
-    const point = await writePoint({ weight, time })
-
-    // Respond
-    res.send(point)
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const read_points = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    // Filters
-    // Using let because some variable types might change
-    let {
-      start = "0", // by default, query all points
-      stop,
-      tags = [],
-      fields = [],
-      limit = 500, // Limit point count by default, note: this is approximative
-    } = req.query
-
-    const stop_query = stop ? `stop: ${stop}` : ""
-
-    // If only one tag provided, will be parsed as string so put it in an array
-    if (typeof tags === "string") tags = [tags]
-    if (typeof fields === "string") fields = [fields]
-
-    // NOTE: check for risks of injection
-    let query = `
-            from(bucket:"${bucket}")
-            |> range(start: ${start}, ${stop_query})
-            |> filter(fn: (r) => r._measurement == "${measurement}")
-            `
-
-    // subsampling
-    if (Number(limit)) {
-      // Getting point count to compute the sampling from the limit
-      const count_query = query + `|> count()`
-      const record_count_query_result: any = await influx_read(count_query)
-      const record_count = record_count_query_result[0]?._value // Dirty here
-      if (record_count) {
-        const sampling = Math.max(Math.round(record_count / Number(limit)), 1)
-        // Apply subsampling
-        query += `|> sample(n:${sampling}, pos: 0)`
-      }
-    }
-
-    // Run the query
-    const points = await influx_read(query)
-
-    // Respond to client
-    res.send(points)
-
-    console.log(`Points of measurement ${measurement} queried`)
-  } catch (error) {
-    next(error)
-  }
-}
+  res.send({ from, to, limit: Number(limit), records: rows });
+};
