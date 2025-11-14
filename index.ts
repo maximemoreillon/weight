@@ -11,6 +11,7 @@ import {
 } from "./mqtt";
 import { authMiddleware, IDENTIFICATION_URL, OIDC_JWKS_URI } from "./auth";
 import { router as pointsRouter } from "./routes/points";
+import { TIMESCALEDB_DATABASE, TIMESCALEDB_HOST, TIMESCALEDB_PORT } from "./db";
 const { APP_PORT = 80 } = process.env;
 
 mqttConnect();
@@ -26,6 +27,11 @@ app.get("/", (req, res) => {
     application_name: "Weight",
     version,
     author,
+    timescaleDb: {
+      host: TIMESCALEDB_HOST,
+      port: TIMESCALEDB_PORT,
+      db: TIMESCALEDB_DATABASE,
+    },
     mqtt: {
       url: MQTT_URL,
       topic: MQTT_TOPIC,
