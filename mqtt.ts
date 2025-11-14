@@ -4,8 +4,8 @@ import { pointSchema } from "./validation";
 
 export const {
   MQTT_URL = "mqtt://localhost:1883",
-  MQTT_USERNAME,
-  MQTT_PASSWORD,
+  MQTT_USERNAME = "",
+  MQTT_PASSWORD = "",
   MQTT_TOPIC = "weight",
 } = process.env;
 
