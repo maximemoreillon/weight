@@ -9,10 +9,12 @@ import {
   connect as mqttConnect,
   MQTT_TOPIC,
 } from "./mqtt";
-import { authMiddleware, IDENTIFICATION_URL, OIDC_JWKS_URI } from "./auth";
 import { router as pointsRouter } from "./routes/points";
 import { TIMESCALEDB_DATABASE, TIMESCALEDB_HOST, TIMESCALEDB_PORT } from "./db";
-const { APP_PORT = 80 } = process.env;
+
+import oidcMiddleware from "@moreillon/express-oidc";
+
+const { APP_PORT = 80, OIDC_JWKS_URI } = process.env;
 
 mqttConnect();
 
@@ -38,13 +40,13 @@ app.get("/", (req, res) => {
       connected: mqttGetConnected(),
     },
     auth: {
-      identification_url: IDENTIFICATION_URL,
       oidc_jwks_uri: OIDC_JWKS_URI,
     },
   });
 });
 
-app.use(authMiddleware);
+if (OIDC_JWKS_URI) app.use(oidcMiddleware({ jwksUri: OIDC_JWKS_URI }));
+
 app.use("/points", pointsRouter);
 
 app.listen(APP_PORT, () => {
