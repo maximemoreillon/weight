@@ -45,7 +45,12 @@ app.get("/", (req, res) => {
   });
 });
 
-if (OIDC_JWKS_URI) app.use(oidcMiddleware({ jwksUri: OIDC_JWKS_URI }));
+if (OIDC_JWKS_URI) {
+  console.log(`[Auth] OIDC auth enabled`);
+  app.use(oidcMiddleware({ jwksUri: OIDC_JWKS_URI }));
+} else {
+  console.log(`[Auth] OIDC auth disabled`);
+}
 
 app.use("/points", pointsRouter);
 
