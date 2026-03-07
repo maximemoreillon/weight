@@ -16,6 +16,8 @@ spec:
         - name: ${APPLICATION_NAME}
           image: ${CONTAINER_IMAGE_TAGGED}
           env:
+            - name: MMQTT_URL
+              value: mqtt://mqtt.mqtt
             - name: MQTT_TOPIC
               value: moreillon/scale-f79c9/measurement
             - name: TIMESCALEDB_DATABASE
