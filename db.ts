@@ -15,3 +15,7 @@ export const pool = new pg.Pool({
   user: TIMESCALEDB_USER,
   password: TIMESCALEDB_PASSWORD,
 });
+
+export async function dbConnectionCheck() {
+  const res = await pool.query("SELECT 1");
+}

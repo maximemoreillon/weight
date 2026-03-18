@@ -23,7 +23,7 @@ spec:
             - name: TIMESCALEDB_DATABASE
               value: health
             - name: TIMESCALEDB_HOST
-              value: imescaledb.timescale
+              value: timescaledb.timescale
           envFrom:
             - secretRef:
                 name: weight-env-from-vault

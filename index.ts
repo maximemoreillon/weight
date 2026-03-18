@@ -10,12 +10,18 @@ import {
   MQTT_TOPIC,
 } from "./mqtt";
 import { router as pointsRouter } from "./routes/points";
-import { TIMESCALEDB_DATABASE, TIMESCALEDB_HOST, TIMESCALEDB_PORT } from "./db";
+import {
+  dbConnectionCheck,
+  TIMESCALEDB_DATABASE,
+  TIMESCALEDB_HOST,
+  TIMESCALEDB_PORT,
+} from "./db";
 
 import oidcMiddleware from "@moreillon/express-oidc";
 
 const { APP_PORT = 80, OIDC_JWKS_URI } = process.env;
 
+dbConnectionCheck();
 mqttConnect();
 
 if (!process.env.TZ) process.env.TZ = "Asia/Tokyo";
