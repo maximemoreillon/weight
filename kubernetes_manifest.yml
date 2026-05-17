@@ -23,7 +23,7 @@ spec:
             - name: DB_DATABASE
               value: health
             - name: DB_HOST
-              value: postgres.postgreesql
+              value: postgres.postgresql
           envFrom:
             - secretRef:
                 name: weight-env-from-vault
