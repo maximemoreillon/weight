@@ -20,10 +20,10 @@ spec:
               value: mqtt://mqtt.mqtt
             - name: MQTT_TOPIC
               value: moreillon/scale-f79c9/measurement
-            - name: TIMESCALEDB_DATABASE
+            - name: DB_DATABASE
               value: health
-            - name: TIMESCALEDB_HOST
-              value: timescaledb.timescale
+            - name: DB_HOST
+              value: postgres.postgreesql
           envFrom:
             - secretRef:
                 name: weight-env-from-vault
@@ -76,6 +76,9 @@ spec:
   target:
     name: weight-env-from-vault
     creationPolicy: Orphan
+  dataFrom:
+    - extract:
+        key: weight
   data:
     - secretKey: MQTT_USERNAME
       remoteRef:
@@ -85,8 +88,3 @@ spec:
       remoteRef:
         key: mqtt
         property: PASSWORD
-    # TimescaleDB
-    - secretKey: TIMESCALEDB_PASSWORD
-      remoteRef:
-        key: timescale
-        property: POSTGRES_PASSWORD

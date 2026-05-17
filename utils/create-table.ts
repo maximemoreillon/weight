@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { pool } from "../db";
+import { pool, TIMESCALEDB_ENABLED } from "../db";
 
 async function main() {
   await pool.query(`
@@ -8,7 +8,8 @@ async function main() {
       weight DOUBLE PRECISION NOT NULL
     );`);
 
-  await pool.query(`SELECT create_hypertable('weight', by_range('time'));`);
+  if (TIMESCALEDB_ENABLED)
+    await pool.query(`SELECT create_hypertable('weight', by_range('time'));`);
   pool.end();
 }
 

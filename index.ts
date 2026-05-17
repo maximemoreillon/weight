@@ -10,12 +10,7 @@ import {
   MQTT_TOPIC,
 } from "./mqtt";
 import { router as pointsRouter } from "./routes/points";
-import {
-  dbConnectionCheck,
-  TIMESCALEDB_DATABASE,
-  TIMESCALEDB_HOST,
-  TIMESCALEDB_PORT,
-} from "./db";
+import { dbConnectionCheck, DB_DATABASE, DB_HOST, DB_PORT } from "./db";
 
 import oidcMiddleware from "@moreillon/express-oidc";
 
@@ -35,10 +30,10 @@ app.get("/", (req, res) => {
     application_name: "Weight",
     version,
     author,
-    timescaleDb: {
-      host: TIMESCALEDB_HOST,
-      port: TIMESCALEDB_PORT,
-      db: TIMESCALEDB_DATABASE,
+    db: {
+      host: DB_HOST,
+      port: DB_PORT,
+      db: DB_DATABASE,
     },
     mqtt: {
       url: MQTT_URL,
