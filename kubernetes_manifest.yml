@@ -19,7 +19,7 @@ spec:
             - name: MQTT_URL
               value: mqtt://mqtt.mqtt
             - name: MQTT_TOPIC
-              value: moreillon/scale-f79c9/measurement
+              value: scale-f79c9/measurement
             - name: DB_DATABASE
               value: health
             - name: DB_HOST
